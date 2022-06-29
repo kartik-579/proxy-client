@@ -24,7 +24,7 @@ RUN cp /build/proxy-client .
 EXPOSE 8080
 
 # Build a small image
-FROM ubuntu:22.04
+FROM alpine:3.16.0
 #COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /dist/proxy-client /
 ENTRYPOINT ["/proxy-client"]
