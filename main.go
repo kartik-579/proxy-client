@@ -4,6 +4,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
@@ -44,6 +45,7 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 	transport := &http.Transport{
 		Proxy:             http.ProxyURL(proxyURL),
 		DisableKeepAlives: false,
+		TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
 	}
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(targetURL)
