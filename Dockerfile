@@ -24,7 +24,7 @@ RUN cp /build/proxy-client .
 EXPOSE 8080
 
 # Build a small image
-FROM scratch
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+FROM ubuntu:22.04
+#COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /dist/proxy-client /
 ENTRYPOINT ["/proxy-client"]
