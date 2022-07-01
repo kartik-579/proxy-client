@@ -72,8 +72,13 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 			fmt.Printf("%q\n", dump)
 		}
 	}
+	reverseProxy.ModifyResponse = func(response *http.Response) error {
+		if debug && response.StatusCode != 200 {
+			fmt.Printf("status code %d", response.StatusCode)
+		}
+		return nil
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		reverseProxy.ServeHTTP(w, r)
 	}
 }
