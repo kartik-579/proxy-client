@@ -16,14 +16,19 @@ import (
 
 var proxyString string
 var rawURL string
+var debug = false
 
 func main() {
-	if len(os.Args) != 3 {
+	if len(os.Args) != 3 && len(os.Args) != 4 {
 		fmt.Println("Usage: ", os.Args[0], "http://proxy-host:port http://host:port/page")
 		os.Exit(1)
 	}
 	proxyString = os.Args[1]
 	rawURL = os.Args[2]
+
+	if len(os.Args) == 4 && os.Args[3] == "debug" {
+		debug = true
+	}
 
 	fmt.Printf("%s %s\n", proxyString, rawURL)
 
@@ -58,8 +63,17 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 			// explicitly disable User-Agent so it's not set to default value
 			req.Header.Set("User-Agent", "")
 		}
+		if debug {
+			dump, err := httputil.DumpRequestOut(req, true)
+			if err != nil {
+				fmt.Println("error")
+				fmt.Println(err)
+			}
+			fmt.Printf("%q\n", dump)
+		}
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		reverseProxy.ServeHTTP(w, r)
 	}
 }
