@@ -90,6 +90,12 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 		}
 		return nil
 	}
+	reverseProxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, err error) {
+		if err != nil {
+			fmt.Println("logging err")
+			fmt.Println(err)
+		}
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		reverseProxy.ServeHTTP(w, r)
 	}
