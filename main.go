@@ -8,10 +8,12 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"time"
 )
 
 var proxyString string
@@ -48,9 +50,19 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 	checkError(err)
 
 	transport := &http.Transport{
-		Proxy:             http.ProxyURL(proxyURL),
-		DisableKeepAlives: false,
-		TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+		Proxy:                 http.ProxyURL(proxyURL),
+		DisableKeepAlives:     false,
+		TLSClientConfig:       &tls.Config{InsecureSkipVerify: true},
+		MaxConnsPerHost:       100,
+		MaxIdleConnsPerHost:   100,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
 	}
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(targetURL)
