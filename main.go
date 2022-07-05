@@ -60,7 +60,7 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 		//ExpectContinueTimeout: 5 * time.Second,
 		TLSHandshakeTimeout: 10 * time.Second,
 		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
+			Timeout:   80 * time.Second,
 			KeepAlive: 10 * time.Second,
 		}).DialContext,
 	}
