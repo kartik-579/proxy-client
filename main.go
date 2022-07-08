@@ -51,7 +51,7 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 
 	transport := &http.Transport{
 		Proxy:               http.ProxyURL(proxyURL),
-		DisableKeepAlives:   false,
+		DisableKeepAlives:   true,
 		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
 		MaxConnsPerHost:     100,
 		MaxIdleConnsPerHost: 100,
@@ -59,9 +59,9 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 		IdleConnTimeout:     90 * time.Second,
 		//ExpectContinueTimeout: 5 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
-		ResponseHeaderTimeout: 80 * time.Second,
+		ResponseHeaderTimeout: 90 * time.Second,
 		DialContext: (&net.Dialer{
-			Timeout:   180 * time.Second,
+			Timeout:   90 * time.Second,
 			KeepAlive: 10 * time.Second,
 		}).DialContext,
 	}
@@ -87,7 +87,7 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 	}
 	reverseProxy.ModifyResponse = func(response *http.Response) error {
 		if debug && response.StatusCode != 200 {
-			fmt.Printf("status code %d", response.StatusCode)
+			fmt.Printf("status code %d\n", response.StatusCode)
 		}
 		return nil
 	}
