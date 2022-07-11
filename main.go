@@ -67,7 +67,15 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 	}
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(targetURL)
+	defaultRoundTriper := reverseProxy.Transport.RoundTrip
 	reverseProxy.Transport = transport
+	transport.RoundTrip = func(request *http.Request) (*http.Response, error) {
+		resp, err := defaultRoundTriper(request)
+		if err != nil {
+
+		}
+		return resp, err
+	}
 	reverseProxy.Director = func(req *http.Request) {
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
@@ -85,9 +93,10 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 			fmt.Printf("%q\n", dump)
 		}
 	}
+
 	reverseProxy.ModifyResponse = func(response *http.Response) error {
 		if debug && response.StatusCode != 200 {
-			fmt.Printf("status code %d\n", response.StatusCode)
+			fmt.Printf("status code %d %s\n", response.StatusCode, response.Request.URL)
 		}
 		return nil
 	}
