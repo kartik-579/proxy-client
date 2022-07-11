@@ -79,11 +79,11 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 		if debug {
 			dump, err := httputil.DumpRequestOut(req, true)
 			if err != nil {
-				fmt.Println("error")
-				fmt.Println(err)
+				fmt.Print("dump error", err)
 			}
 			fmt.Printf("%q\n", dump)
 		}
+		req.Close = true
 	}
 
 	reverseProxy.ModifyResponse = func(response *http.Response) error {
@@ -94,8 +94,7 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 	}
 	reverseProxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, err error) {
 		if err != nil {
-			fmt.Println("logging err")
-			fmt.Println(err)
+			fmt.Println("reqres err", err)
 		}
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
