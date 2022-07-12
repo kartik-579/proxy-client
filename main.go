@@ -53,20 +53,21 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 		Proxy:               http.ProxyURL(proxyURL),
 		DisableKeepAlives:   true,
 		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
-		MaxConnsPerHost:     100,
+		MaxConnsPerHost:     500,
 		MaxIdleConnsPerHost: 100,
 		MaxIdleConns:        100,
-		IdleConnTimeout:     90 * time.Second,
+		//IdleConnTimeout:     90 * time.Second,
 		//ExpectContinueTimeout: 5 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ResponseHeaderTimeout: 90 * time.Second,
+		//TLSHandshakeTimeout:   10 * time.Second,
+		//ResponseHeaderTimeout: 90 * time.Second,
 		DialContext: (&net.Dialer{
-			Timeout:   90 * time.Second,
+			//Timeout:   90 * time.Second,
 			KeepAlive: 10 * time.Second,
 		}).DialContext,
 	}
 
 	reverseProxy := httputil.NewSingleHostReverseProxy(targetURL)
+	reverseProxy.FlushInterval = -1
 	reverseProxy.Transport = transport
 	reverseProxy.Director = func(req *http.Request) {
 		req.URL.Scheme = targetURL.Scheme
