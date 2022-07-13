@@ -25,6 +25,8 @@ EXPOSE 8080
 
 # Build a small image
 FROM alpine:3.16.0
+RUN apk --no-cache add curl && \
+    rm -rf /var/cache/apk/*
 #COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /dist/proxy-client /
 ENTRYPOINT ["/proxy-client"]
