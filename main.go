@@ -53,7 +53,7 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 		Proxy:               http.ProxyURL(proxyURL),
 		DisableKeepAlives:   true,
 		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
-		MaxConnsPerHost:     500,
+		MaxConnsPerHost:     100,
 		MaxIdleConnsPerHost: 100,
 		MaxIdleConns:        100,
 		//IdleConnTimeout:     90 * time.Second,
