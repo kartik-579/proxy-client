@@ -72,7 +72,7 @@ func NewReverseProxyViaProxy(target string, proxy string) func(w http.ResponseWr
 	reverseProxy.Director = func(req *http.Request) {
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
-		req.Host = targetURL.Host
+		req.Host = proxyURL.Host
 		if _, ok := req.Header["User-Agent"]; !ok {
 			// explicitly disable User-Agent so it's not set to default value
 			req.Header.Set("User-Agent", "")
